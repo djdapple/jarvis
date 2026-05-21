@@ -61,7 +61,7 @@ function jarvisResponse(rawText) {
   // MUSIC MAP (ROBUST)
   // -------------------------
   const music = {
-    "mind of a crook": {
+    "open song": {
       url: ""https://www.youtube.com/watch?v=wALHel_YMQg"",
       response: "Playing Mind of a Crook."
     }
