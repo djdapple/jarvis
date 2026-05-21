@@ -5,7 +5,13 @@ const statusText = document.getElementById("status");
 const orb = document.querySelector(".orb");
 
 /* ---------------------------
-   TERMINAL LOG
+   MEMORY ENGINE
+--------------------------- */
+let commandHistory = [];
+let lastCommand = null;
+
+/* ---------------------------
+   LOG
 --------------------------- */
 function log(text) {
   terminal.innerText =
@@ -13,148 +19,89 @@ function log(text) {
 }
 
 /* ---------------------------
-   SPEAK
+   SPEAK (AUDIO OUTPUT)
 --------------------------- */
 function speak(text) {
 
   window.speechSynthesis.cancel();
 
-  const msg =
-    new SpeechSynthesisUtterance(text);
+  const msg = new SpeechSynthesisUtterance(text);
 
   msg.rate = 0.95;
   msg.pitch = 0.9;
-  msg.volume = 1;
 
   speechSynthesis.speak(msg);
 }
 
 /* ---------------------------
-   JARVIS COMMAND SYSTEM
+   JARVIS CORE COMMANDS
 --------------------------- */
 function jarvisResponse(text) {
 
   const t = text.toLowerCase();
 
-  // -------------------------
-  // TIME SYSTEM
-  // -------------------------
   const now = new Date();
 
-  let hours = now.getHours();
-  let minutes = now.getMinutes();
+  let h = now.getHours();
+  let m = now.getMinutes();
 
-  const ampm =
-    hours >= 12 ? "PM" : "AM";
+  const ampm = h >= 12 ? "PM" : "AM";
 
-  hours = hours % 12 || 12;
+  h = h % 12 || 12;
+  m = m < 10 ? "0" + m : m;
 
-  minutes =
-    minutes < 10
-      ? "0" + minutes
-      : minutes;
+  const currentTime = `${h}:${m} ${ampm}`;
 
-  const currentTime =
-    `${hours}:${minutes} ${ampm}`;
-
-  // -------------------------
-  // COMMAND SHEET
-  // -------------------------
   const commands = {
 
-    time: () => {
-      return `Dejuan, the time is ${currentTime}`;
-    },
+    time: () =>
+      `Dejuan, the time is ${currentTime}`,
 
-    hello: () => {
-      return "Hello Dejuan. Systems online.";
-    },
+    hello: () =>
+      "Hello Dejuan. Systems online.",
 
-    status: () => {
-      return "All systems operational, Dejuan.";
-    },
+    status: () =>
+      "All systems operational, Dejuan.",
 
     youtube: () => {
-
-      window.open(
-        "https://youtube.com",
-        "_blank"
-      );
-
-      return "Opening YouTube, Dejuan.";
+      window.open("https://youtube.com", "_blank");
+      return "Opening YouTube.";
     },
 
     google: () => {
-
-      window.open(
-        "https://google.com",
-        "_blank"
-      );
-
-      return "Opening Google, Dejuan.";
-    },
-
-    gmail: () => {
-
-      window.open(
-        "https://mail.google.com",
-        "_blank"
-      );
-
-      return "Opening Gmail, Dejuan.";
+      window.open("https://google.com", "_blank");
+      return "Opening Google.";
     },
 
     soundcloud: () => {
-
-      window.open(
-        "https://soundcloud.com",
-        "_blank"
-      );
-
-      return "Opening SoundCloud, Dejuan.";
+      window.open("https://soundcloud.com", "_blank");
+      return "Opening SoundCloud.";
     },
 
-    spotify: () => {
+    replay: () => {
 
-      window.open(
-        "https://spotify.com",
-        "_blank"
-      );
+      if (!lastCommand) {
+        return "No command to replay.";
+      }
 
-      return "Opening Spotify.";
+      return `Replaying: ${lastCommand}`;
     },
 
-    netflix: () => {
+    history: () => {
 
-      window.open(
-        "https://netflix.com",
-        "_blank"
-      );
-
-      return "Opening Netflix.";
-    },
-
-    weather: () => {
-
-      window.open(
-        "https://weather.com",
-        "_blank"
-      );
-
-      return "Opening weather systems.";
+      return commandHistory
+        .slice(-5)
+        .map((c, i) => `${i + 1}. ${c}`)
+        .join("\n");
     }
   };
 
-  // -------------------------
-  // SMART MATCH ENGINE
-  // -------------------------
   for (let key in commands) {
 
     if (
       t.includes(key) ||
       t.includes("open " + key) ||
-      t.includes("launch " + key) ||
-      t.includes("go to " + key)
+      t.includes("launch " + key)
     ) {
 
       return commands[key]();
@@ -165,28 +112,22 @@ function jarvisResponse(text) {
 }
 
 /* ---------------------------
-   EXECUTE COMMAND
+   EXECUTE
 --------------------------- */
 function runJarvis() {
 
-  const text =
-    inputBox.value.trim();
-
+  const text = inputBox.value.trim();
   if (!text) return;
 
-  statusText.innerText =
-    "PROCESSING...";
-
-  orb.style.transform =
-    "scale(1.05)";
-
-  orb.style.boxShadow =
-    "0 0 140px rgba(255,255,255,0.25)";
+  statusText.innerText = "PROCESSING...";
 
   log("YOU: " + text);
 
-  const response =
-    jarvisResponse(text);
+  // MEMORY STORE
+  commandHistory.push(text);
+  lastCommand = text;
+
+  const response = jarvisResponse(text);
 
   setTimeout(() => {
 
@@ -194,54 +135,33 @@ function runJarvis() {
 
     speak(response);
 
-    statusText.innerText =
-      "AWAITING COMMAND...";
+    statusText.innerText = "AWAITING COMMAND...";
 
-    orb.style.transform =
-      "scale(1)";
-
-    orb.style.boxShadow =
-      "0 0 60px rgba(255,255,255,0.12)";
-
-  }, 500);
+  }, 400);
 
   inputBox.value = "";
 }
 
 /* ---------------------------
-   BUTTON
+   EVENTS
 --------------------------- */
-sendBtn.addEventListener(
-  "click",
-  runJarvis
-);
+sendBtn.addEventListener("click", runJarvis);
+
+inputBox.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") runJarvis();
+});
 
 /* ---------------------------
-   ENTER KEY
---------------------------- */
-inputBox.addEventListener(
-  "keypress",
-  (e) => {
-
-    if (e.key === "Enter") {
-      runJarvis();
-    }
-  }
-);
-
-/* ---------------------------
-   STARTUP MESSAGE
+   STARTUP
 --------------------------- */
 window.onload = () => {
 
   setTimeout(() => {
 
-    const startup =
-      "Welcome back, Dejuan.";
+    const msg = "Memory system online, Dejuan.";
 
-    log("JARVIS: " + startup);
+    log("JARVIS: " + msg);
+    speak(msg);
 
-    speak(startup);
-
-  }, 1200);
+  }, 1000);
 };
