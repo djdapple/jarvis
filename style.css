@@ -1,53 +1,76 @@
-const inputBox = document.getElementById("inputBox");
-const sendBtn = document.getElementById("sendBtn");
-const output = document.getElementById("output");
-const orb = document.querySelector(".orb");
-
-// simple response brain (starter AI logic)
-function jarvisResponse(input) {
-  input = input.toLowerCase();
-
-  if (input.includes("hello")) {
-    return "Hello. Systems online.";
-  }
-
-  if (input.includes("who are you")) {
-    return "I am DRILLIONS JARVIS. Your interface assistant.";
-  }
-
-  if (input.includes("open youtube")) {
-    window.open("https://youtube.com", "_blank");
-    return "Opening YouTube.";
-  }
-
-  if (input.includes("open google")) {
-    window.open("https://google.com", "_blank");
-    return "Opening Google.";
-  }
-
-  if (input.includes("status")) {
-    return "All systems stable. Core running at 100%.";
-  }
-
-  return "Command not recognized. Try: hello, status, open youtube.";
+body {
+  margin: 0;
+  background: #050505;
+  color: white;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
 }
 
-function sendMessage() {
-  const text = inputBox.value.trim();
-
-  if (!text) return;
-
-  const response = jarvisResponse(text);
-
-  output.innerText = "You: " + text + "\nJarvis: " + response;
-
-  inputBox.value = "";
+.jarvis-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-sendBtn.addEventListener("click", sendMessage);
+h1 {
+  font-size: 2.5rem;
+  letter-spacing: 4px;
+  margin-bottom: 20px;
 
-inputBox.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") {
-    sendMessage();
-  }
-});
+  background: linear-gradient(to right, white, gray);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.orb {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+
+  background: radial-gradient(circle, #333, #0a0a0a);
+
+  box-shadow: 0 0 30px rgba(255,255,255,0.15);
+
+  margin: 20px;
+  animation: pulse 2.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); box-shadow: 0 0 30px rgba(255,255,255,0.15); }
+  50% { transform: scale(1.05); box-shadow: 0 0 60px rgba(255,255,255,0.35); }
+  100% { transform: scale(1); box-shadow: 0 0 30px rgba(255,255,255,0.15); }
+}
+
+#output {
+  margin-top: 10px;
+  font-size: 1.1rem;
+  opacity: 0.8;
+}
+
+#inputBox {
+  margin-top: 20px;
+  padding: 12px;
+  width: 250px;
+  border: none;
+  border-radius: 8px;
+  background: #111;
+  color: white;
+  outline: none;
+  text-align: center;
+}
+
+#sendBtn {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #1a1a1a;
+  color: white;
+  cursor: pointer;
+}
+
+#sendBtn:hover {
+  background: #2a2a2a;
+}
