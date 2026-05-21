@@ -6,8 +6,39 @@ body {
   overflow: hidden;
 }
 
-.jarvis-container {
+/* LAYOUT */
+
+.layout {
+  display: flex;
   height: 100vh;
+}
+
+/* PANELS */
+
+.panel {
+  width: 20%;
+  padding: 20px;
+
+  background:
+    rgba(15,15,15,0.8);
+
+  border-right:
+    1px solid rgba(255,255,255,0.08);
+
+  box-sizing: border-box;
+}
+
+.right-panel {
+  border-right: none;
+
+  border-left:
+    1px solid rgba(255,255,255,0.08);
+}
+
+/* CENTER */
+
+.center-area {
+  flex: 1;
 
   display: flex;
   flex-direction: column;
@@ -16,70 +47,59 @@ body {
   align-items: center;
 }
 
-h1 {
-  font-size: 2.8rem;
-  letter-spacing: 5px;
+/* TITLE */
 
-  background: linear-gradient(to right, #ffffff, #777777);
+h1 {
+  letter-spacing: 6px;
+
+  background:
+    linear-gradient(to right,#fff,#777);
 
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
+/* ORB */
+
 .orb {
-  width: 180px;
-  height: 180px;
+  width: 220px;
+  height: 220px;
 
   border-radius: 50%;
 
-  margin: 25px;
+  margin: 30px;
 
   background:
-    radial-gradient(circle, #2d2d2d, #080808);
+    radial-gradient(circle,#333,#080808);
 
   box-shadow:
-    0 0 40px rgba(255,255,255,0.15);
+    0 0 50px rgba(255,255,255,0.15);
 
-  animation: pulse 2.5s infinite ease-in-out;
+  animation:
+    pulse 2.5s infinite ease-in-out;
 }
 
 @keyframes pulse {
 
   0% {
     transform: scale(1);
-    box-shadow: 0 0 30px rgba(255,255,255,0.15);
   }
 
   50% {
     transform: scale(1.05);
-    box-shadow: 0 0 80px rgba(255,255,255,0.35);
+    box-shadow:
+      0 0 120px rgba(255,255,255,0.35);
   }
 
   100% {
     transform: scale(1);
-    box-shadow: 0 0 30px rgba(255,255,255,0.15);
   }
 }
 
-#status {
-  margin-bottom: 10px;
-  opacity: 0.6;
-  letter-spacing: 2px;
-}
-
-#output {
-  max-width: 70%;
-
-  text-align: center;
-
-  font-size: 1.1rem;
-
-  margin-bottom: 25px;
-
-  white-space: pre-line;
-}
+/* INPUT */
 
 #inputBox {
+
   width: 260px;
 
   padding: 12px;
@@ -87,7 +107,7 @@ h1 {
   border: none;
   border-radius: 10px;
 
-  background: #111111;
+  background: #111;
 
   color: white;
 
@@ -96,10 +116,13 @@ h1 {
   outline: none;
 }
 
-#sendBtn {
-  margin-top: 12px;
+/* BUTTON */
 
-  padding: 10px 20px;
+button {
+
+  margin-top: 15px;
+
+  padding: 12px 22px;
 
   border: none;
   border-radius: 10px;
@@ -111,6 +134,33 @@ h1 {
   cursor: pointer;
 }
 
-#sendBtn:hover {
+button:hover {
   background: #2d2d2d;
+}
+
+/* TERMINAL */
+
+#terminal {
+
+  margin-top: 20px;
+
+  font-size: 0.95rem;
+
+  opacity: 0.75;
+
+  white-space: pre-line;
+}
+
+/* CARDS */
+
+.card {
+
+  margin-top: 15px;
+
+  padding: 15px;
+
+  border-radius: 10px;
+
+  background:
+    rgba(255,255,255,0.04);
 }
