@@ -4,158 +4,135 @@ const terminal = document.getElementById("terminal");
 const statusText = document.getElementById("status");
 const orb = document.querySelector(".orb");
 
-let lastCommand = null;
-let commandHistory = [];
-
-/* ---------------------------
-   LOG
---------------------------- */
 function log(text) {
   terminal.innerText = text + "\n\n" + terminal.innerText;
 }
 
 /* ---------------------------
-   SPEAK (VOICE OUTPUT)
+   SPEECH
 --------------------------- */
 function speak(text) {
   window.speechSynthesis.cancel();
-
   const msg = new SpeechSynthesisUtterance(text);
   msg.rate = 0.95;
   msg.pitch = 0.9;
-
   speechSynthesis.speak(msg);
 }
 
 /* ---------------------------
-   SAFE OPEN (FIX POPUP ISSUES)
+   OPEN LINK SAFELY
 --------------------------- */
 function openTab(url) {
-  const win = window.open(url, "_blank");
+  const a = document.createElement("a");
+  a.href = url;
+  a.target = "_blank";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
 
-  if (!win) {
-    log("⚠️ Popup blocked. Please allow popups for full experience.");
+/* ---------------------------
+   CALENDAR
+--------------------------- */
+function generateCalendar() {
+
+  const now = new Date();
+  const month = now.getMonth();
+  const year = now.getFullYear();
+  const today = now.getDate();
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const days = new Date(year, month + 1, 0).getDate();
+
+  const names = [
+    "January","February","March","April","May","June",
+    "July","August","September","October","November","December"
+  ];
+
+  document.getElementById("calHeader").innerText =
+    `${names[month]} ${year}`;
+
+  const grid = document.getElementById("calGrid");
+  grid.innerHTML = "";
+
+  for (let i = 0; i < firstDay; i++) {
+    grid.appendChild(document.createElement("div"));
+  }
+
+  for (let d = 1; d <= days; d++) {
+
+    const el = document.createElement("div");
+    el.classList.add("calendar-day");
+    el.innerText = d;
+
+    if (d === today) {
+      el.classList.add("today");
+    }
+
+    grid.appendChild(el);
   }
 }
 
 /* ---------------------------
-   NORMALIZE INPUT (KEY FIX)
+   JARVIS ENGINE
 --------------------------- */
-function normalize(text) {
-  return text
-    .toLowerCase()
-    .replace(/play|open|launch|start/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
+function jarvisResponse(text) {
 
-/* ---------------------------
-   COMMAND ROUTER
---------------------------- */
-function jarvisResponse(rawText) {
+  const t = text.toLowerCase();
 
-  const t = rawText.toLowerCase();
-  const cleaned = normalize(rawText);
+  const now = new Date();
+  let h = now.getHours();
+  let m = now.getMinutes();
+  const ampm = h >= 12 ? "PM" : "AM";
 
-  // -------------------------
-  // MUSIC MAP (ROBUST)
-  // -------------------------
-  const music = {
-    "open song": {
-      url: ""https://www.youtube.com/watch?v=wALHel_YMQg"",
-      response: "Playing Mind of a Crook."
-    }
-  };
+  h = h % 12 || 12;
+  m = m < 10 ? "0" + m : m;
 
-  for (let key in music) {
-    if (
-      t.includes(key) ||
-      cleaned.includes(key)
-    ) {
-      openTab(music[key].url);
-      return music[key].response;
-    }
+  const time = `${h}:${m} ${ampm}`;
+
+  /* MUSIC */
+  if (t.includes("mind of a crook")) {
+    openTab("https://www.youtube.com/watch?v=wALHel_YMQg");
+    return "Playing Mind of a Crook.";
   }
 
-  // -------------------------
-  // COMMANDS MAP
-  // -------------------------
-  const commands = {
+  /* COMMANDS */
+  if (t.includes("time")) return `Dejuan, the time is ${time}`;
 
-    time: () => {
-      const now = new Date();
+  if (t.includes("youtube")) {
+    openTab("https://youtube.com");
+    return "Opening YouTube.";
+  }
 
-      let h = now.getHours();
-      let m = now.getMinutes();
-      const ampm = h >= 12 ? "PM" : "AM";
+  if (t.includes("google")) {
+    openTab("https://google.com");
+    return "Opening Google.";
+  }
 
-      h = h % 12 || 12;
-      m = m < 10 ? "0" + m : m;
-
-      return `Dejuan, the time is ${h}:${m} ${ampm}`;
-    },
-
-    hello: () =>
-      "Hello Dejuan. Systems online.",
-
-    status: () =>
-      "All systems operational.",
-
-    youtube: () => {
-      openTab("https://youtube.com");
-      return "Opening YouTube.";
-    },
-
-    google: () => {
-      openTab("https://google.com");
-      return "Opening Google.";
-    },
-
-    gmail: () => {
-      openTab("https://mail.google.com");
-      return "Opening Gmail.";
-    },
-
-    soundcloud: () => {
-      openTab("https://soundcloud.com");
-      return "Opening SoundCloud.";
-    }
-  };
-
-  for (let key in commands) {
-    if (
-      t.includes(key) ||
-      cleaned.includes(key)
-    ) {
-      return commands[key]();
-    }
+  if (t.includes("soundcloud")) {
+    openTab("https://soundcloud.com");
+    return "Opening SoundCloud.";
   }
 
   return "Command not recognized, Dejuan.";
 }
 
 /* ---------------------------
-   EXECUTE
+   RUN
 --------------------------- */
 function runJarvis() {
 
   const text = inputBox.value.trim();
   if (!text) return;
 
-  statusText.innerText = "PROCESSING...";
-
   log("YOU: " + text);
-
-  lastCommand = text;
-  commandHistory.push(text);
 
   const response = jarvisResponse(text);
 
   setTimeout(() => {
     log("JARVIS: " + response);
     speak(response);
-    statusText.innerText = "AWAITING COMMAND...";
-  }, 300);
+  }, 250);
 
   inputBox.value = "";
 }
@@ -168,3 +145,16 @@ sendBtn.addEventListener("click", runJarvis);
 inputBox.addEventListener("keypress", (e) => {
   if (e.key === "Enter") runJarvis();
 });
+
+/* ---------------------------
+   STARTUP
+--------------------------- */
+window.onload = () => {
+  generateCalendar();
+
+  setTimeout(() => {
+    const msg = "Jarvis systems online.";
+    log("JARVIS: " + msg);
+    speak(msg);
+  }, 800);
+};
