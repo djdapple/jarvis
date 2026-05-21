@@ -11,12 +11,11 @@ let commandHistory = [];
    LOG
 --------------------------- */
 function log(text) {
-  terminal.innerText =
-    text + "\n\n" + terminal.innerText;
+  terminal.innerText = text + "\n\n" + terminal.innerText;
 }
 
 /* ---------------------------
-   SPEECH
+   SPEAK (VOICE OUTPUT)
 --------------------------- */
 function speak(text) {
   window.speechSynthesis.cancel();
@@ -29,39 +28,72 @@ function speak(text) {
 }
 
 /* ---------------------------
-   JARVIS RESPONSE ENGINE
+   SAFE OPEN (FIX POPUP ISSUES)
 --------------------------- */
-function jarvisResponse(text) {
+function openTab(url) {
+  const win = window.open(url, "_blank");
 
-  const t = text.toLowerCase();
+  if (!win) {
+    log("⚠️ Popup blocked. Please allow popups for full experience.");
+  }
+}
 
-  const now = new Date();
-  let h = now.getHours();
-  let m = now.getMinutes();
+/* ---------------------------
+   NORMALIZE INPUT (KEY FIX)
+--------------------------- */
+function normalize(text) {
+  return text
+    .toLowerCase()
+    .replace(/play|open|launch|start/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
-  const ampm = h >= 12 ? "PM" : "AM";
-  h = h % 12 || 12;
-  m = m < 10 ? "0" + m : m;
+/* ---------------------------
+   COMMAND ROUTER
+--------------------------- */
+function jarvisResponse(rawText) {
 
-  const timeString = `${h}:${m} ${ampm}`;
+  const t = rawText.toLowerCase();
+  const cleaned = normalize(rawText);
 
-  /* -------------------------
-     MUSIC LIBRARY
-  --------------------------*/
+  // -------------------------
+  // MUSIC MAP (ROBUST)
+  // -------------------------
   const music = {
     "mind of a crook": {
-      url: "https://youtu.be/wALHel_YMQg?si=IpaByTNS_Dk4PJW_",
+      url: "https://youtu.be/wALHel_YMQg",
       response: "Playing Mind of a Crook."
     }
   };
 
-  /* -------------------------
-     COMMANDS
-  --------------------------*/
+  for (let key in music) {
+    if (
+      t.includes(key) ||
+      cleaned.includes(key)
+    ) {
+      openTab(music[key].url);
+      return music[key].response;
+    }
+  }
+
+  // -------------------------
+  // COMMANDS MAP
+  // -------------------------
   const commands = {
 
-    time: () =>
-      `Dejuan, the time is ${timeString}`,
+    time: () => {
+      const now = new Date();
+
+      let h = now.getHours();
+      let m = now.getMinutes();
+      const ampm = h >= 12 ? "PM" : "AM";
+
+      h = h % 12 || 12;
+      m = m < 10 ? "0" + m : m;
+
+      return `Dejuan, the time is ${h}:${m} ${ampm}`;
+    },
 
     hello: () =>
       "Hello Dejuan. Systems online.",
@@ -70,39 +102,30 @@ function jarvisResponse(text) {
       "All systems operational.",
 
     youtube: () => {
-      window.open("https://youtube.com", "_blank");
+      openTab("https://youtube.com");
       return "Opening YouTube.";
     },
 
     google: () => {
-      window.open("https://google.com", "_blank");
+      openTab("https://google.com");
       return "Opening Google.";
     },
 
+    gmail: () => {
+      openTab("https://mail.google.com");
+      return "Opening Gmail.";
+    },
+
     soundcloud: () => {
-      window.open("https://soundcloud.com", "_blank");
+      openTab("https://soundcloud.com");
       return "Opening SoundCloud.";
     }
   };
 
-  /* -------------------------
-     MUSIC MATCH FIRST
-  --------------------------*/
-  for (let key in music) {
-    if (t.includes(key)) {
-      window.open(music[key].url, "_blank");
-      return music[key].response;
-    }
-  }
-
-  /* -------------------------
-     NORMAL COMMAND MATCH
-  --------------------------*/
   for (let key in commands) {
     if (
       t.includes(key) ||
-      t.includes("open " + key) ||
-      t.includes("launch " + key)
+      cleaned.includes(key)
     ) {
       return commands[key]();
     }
@@ -112,12 +135,14 @@ function jarvisResponse(text) {
 }
 
 /* ---------------------------
-   RUN
+   EXECUTE
 --------------------------- */
 function runJarvis() {
 
   const text = inputBox.value.trim();
   if (!text) return;
+
+  statusText.innerText = "PROCESSING...";
 
   log("YOU: " + text);
 
@@ -129,6 +154,7 @@ function runJarvis() {
   setTimeout(() => {
     log("JARVIS: " + response);
     speak(response);
+    statusText.innerText = "AWAITING COMMAND...";
   }, 300);
 
   inputBox.value = "";
