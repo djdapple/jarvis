@@ -1,50 +1,53 @@
-body {
-  margin: 0;
-  background: #050505;
-  color: white;
-  font-family: Arial, sans-serif;
-  overflow: hidden;
+const inputBox = document.getElementById("inputBox");
+const sendBtn = document.getElementById("sendBtn");
+const output = document.getElementById("output");
+const orb = document.querySelector(".orb");
+
+// simple response brain (starter AI logic)
+function jarvisResponse(input) {
+  input = input.toLowerCase();
+
+  if (input.includes("hello")) {
+    return "Hello. Systems online.";
+  }
+
+  if (input.includes("who are you")) {
+    return "I am DRILLIONS JARVIS. Your interface assistant.";
+  }
+
+  if (input.includes("open youtube")) {
+    window.open("https://youtube.com", "_blank");
+    return "Opening YouTube.";
+  }
+
+  if (input.includes("open google")) {
+    window.open("https://google.com", "_blank");
+    return "Opening Google.";
+  }
+
+  if (input.includes("status")) {
+    return "All systems stable. Core running at 100%.";
+  }
+
+  return "Command not recognized. Try: hello, status, open youtube.";
 }
 
-.jarvis-container {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+function sendMessage() {
+  const text = inputBox.value.trim();
+
+  if (!text) return;
+
+  const response = jarvisResponse(text);
+
+  output.innerText = "You: " + text + "\nJarvis: " + response;
+
+  inputBox.value = "";
 }
 
-h1 {
-  font-size: 3rem;
-  letter-spacing: 4px;
+sendBtn.addEventListener("click", sendMessage);
 
-  background: linear-gradient(to right, white, gray);
-
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.orb {
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-
-  background:
-    radial-gradient(circle, #3a3a3a, #0f0f0f);
-
-  box-shadow:
-    0 0 40px rgba(255,255,255,0.2);
-
-  margin: 40px;
-}
-
-button {
-  padding: 15px 30px;
-  border: none;
-  border-radius: 12px;
-
-  background: #1a1a1a;
-  color: white;
-
-  cursor: pointer;
-}
+inputBox.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    sendMessage();
+  }
+});
