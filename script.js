@@ -1,9 +1,12 @@
 const inputBox = document.getElementById("inputBox");
 const sendBtn = document.getElementById("sendBtn");
+const voiceBtn = document.getElementById("voiceBtn");
 const output = document.getElementById("output");
 const orb = document.querySelector(".orb");
 
-// simple response brain (starter AI logic)
+// -----------------------------
+// JARVIS BRAIN (simple logic)
+// -----------------------------
 function jarvisResponse(input) {
   input = input.toLowerCase();
 
@@ -12,7 +15,7 @@ function jarvisResponse(input) {
   }
 
   if (input.includes("who are you")) {
-    return "I am DRILLIONS JARVIS. Your interface assistant.";
+    return "I am Drillions Jarvis. Your assistant system.";
   }
 
   if (input.includes("open youtube")) {
@@ -26,28 +29,71 @@ function jarvisResponse(input) {
   }
 
   if (input.includes("status")) {
-    return "All systems stable. Core running at 100%.";
+    return "All systems stable.";
   }
 
-  return "Command not recognized. Try: hello, status, open youtube.";
+  return "Command not recognized.";
 }
 
-function sendMessage() {
-  const text = inputBox.value.trim();
+// -----------------------------
+// TEXT TO SPEECH (Jarvis talks)
+// -----------------------------
+function speak(text) {
+  const speech = new SpeechSynthesisUtterance(text);
+  speech.rate = 1;
+  speech.pitch = 1;
+  speech.volume = 1;
+  window.speechSynthesis.speak(speech);
+}
 
+// -----------------------------
+// MAIN SEND FUNCTION
+// -----------------------------
+function sendMessage(textOverride) {
+  const text = (textOverride || inputBox.value).trim();
   if (!text) return;
 
   const response = jarvisResponse(text);
 
-  output.innerText = "You: " + text + "\nJarvis: " + response;
+  output.innerText = `You: ${text}\nJarvis: ${response}`;
+
+  speak(response); // JARVIS SPEAKS
 
   inputBox.value = "";
 }
 
-sendBtn.addEventListener("click", sendMessage);
+// -----------------------------
+// BUTTON INPUT
+// -----------------------------
+sendBtn.addEventListener("click", () => sendMessage());
 
+// ENTER KEY
 inputBox.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") {
-    sendMessage();
-  }
+  if (e.key === "Enter") sendMessage();
 });
+
+// -----------------------------
+// VOICE RECOGNITION ENGINE
+// -----------------------------
+const SpeechRecognition =
+  window.SpeechRecognition || window.webkitSpeechRecognition;
+
+const recognition = new SpeechRecognition();
+
+recognition.continuous = false;
+recognition.lang = "en-US";
+recognition.interimResults = false;
+
+voiceBtn.addEventListener("click", () => {
+  output.innerText = "Listening...";
+  recognition.start();
+});
+
+recognition.onresult = (event) => {
+  const voiceText = event.results[0][0].transcript;
+  sendMessage(voiceText);
+};
+
+recognition.onerror = () => {
+  output.innerText = "Voice error. Try again.";
+};
