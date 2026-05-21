@@ -37,7 +37,7 @@ function jarvisResponse(text) {
   const t = text.toLowerCase();
 
   // -------------------------
-  // TIME
+  // TIME SYSTEM
   // -------------------------
   const now = new Date();
 
@@ -91,7 +91,7 @@ function jarvisResponse(text) {
         "_blank"
       );
 
-      return "Opening Google.";
+      return "Opening Google, Dejuan.";
     },
 
     gmail: () => {
@@ -101,7 +101,7 @@ function jarvisResponse(text) {
         "_blank"
       );
 
-      return "Opening Gmail.";
+      return "Opening Gmail, Dejuan.";
     },
 
     soundcloud: () => {
@@ -111,7 +111,7 @@ function jarvisResponse(text) {
         "_blank"
       );
 
-      return "Opening SoundCloud.";
+      return "Opening SoundCloud, Dejuan.";
     },
 
     spotify: () => {
@@ -146,11 +146,17 @@ function jarvisResponse(text) {
   };
 
   // -------------------------
-  // COMMAND MATCH ENGINE
+  // SMART MATCH ENGINE
   // -------------------------
   for (let key in commands) {
 
-    if (t.includes(key)) {
+    if (
+      t.includes(key) ||
+      t.includes("open " + key) ||
+      t.includes("launch " + key) ||
+      t.includes("go to " + key)
+    ) {
+
       return commands[key]();
     }
   }
