@@ -1,72 +1,137 @@
-const output = document.getElementById("output");
-const statusText = document.getElementById("status");
+const inputBox =
+  document.getElementById("inputBox");
 
-// -------------------------
-// TEXT TO SPEECH
-// -------------------------
+const sendBtn =
+  document.getElementById("sendBtn");
+
+const terminal =
+  document.getElementById("terminal");
+
+const statusText =
+  document.getElementById("status");
+
+const orb =
+  document.querySelector(".orb");
+
+// ----------------------
+// TERMINAL WRITER
+// ----------------------
+function writeTerminal(text) {
+
+  terminal.innerText =
+    text + "\n\n" + terminal.innerText;
+}
+
+// ----------------------
+// JARVIS BRAIN
+// ----------------------
+function jarvisResponse(text) {
+
+  text = text.toLowerCase();
+
+  if (text.includes("hello")) {
+    return "Hello. Systems online.";
+  }
+
+  if (text.includes("status")) {
+    return "All systems operational.";
+  }
+
+  if (text.includes("youtube")) {
+
+    window.open(
+      "https://youtube.com",
+      "_blank"
+    );
+
+    return "Opening YouTube.";
+  }
+
+  if (text.includes("google")) {
+
+    window.open(
+      "https://google.com",
+      "_blank"
+    );
+
+    return "Opening Google.";
+  }
+
+  if (text.includes("time")) {
+
+    return new Date().toLocaleTimeString();
+  }
+
+  return "Command processed.";
+}
+
+// ----------------------
+// SPEAK
+// ----------------------
 function speak(text) {
 
-  const speech = new SpeechSynthesisUtterance(text);
-
-  speech.rate = 1;
-  speech.pitch = 1;
+  const speech =
+    new SpeechSynthesisUtterance(text);
 
   window.speechSynthesis.speak(speech);
 }
 
-// -------------------------
-// VOICE RECOGNITION
-// -------------------------
-const SpeechRecognition =
-  window.SpeechRecognition ||
-  window.webkitSpeechRecognition;
+// ----------------------
+// SEND
+// ----------------------
+function sendMessage() {
 
-if (!SpeechRecognition) {
+  const text =
+    inputBox.value.trim();
+
+  if (!text) return;
 
   statusText.innerText =
-    "VOICE NOT SUPPORTED";
+    "PROCESSING...";
 
-} else {
+  orb.style.boxShadow =
+    "0 0 120px rgba(255,255,255,0.45)";
 
-  const recognition =
-    new SpeechRecognition();
+  writeTerminal(
+    "USER: " + text
+  );
 
-  recognition.continuous = true;
+  const response =
+    jarvisResponse(text);
 
-  recognition.lang = "en-US";
+  setTimeout(() => {
 
-  recognition.onstart = () => {
+    writeTerminal(
+      "JARVIS: " + response
+    );
+
+    speak(response);
 
     statusText.innerText =
-      "LISTENING...";
-  };
+      "AWAITING COMMAND...";
 
-  recognition.onresult = (event) => {
+    orb.style.boxShadow =
+      "0 0 50px rgba(255,255,255,0.15)";
 
-    const transcript =
-      event.results[event.results.length - 1][0]
-      .transcript;
+  }, 700);
 
-    output.innerText =
-      `Heard: ${transcript}`;
-
-    // WAKE WORD
-    if (
-      transcript.toLowerCase().includes("hey jarvis")
-    ) {
-
-      output.innerText =
-        "Jarvis Activated";
-
-      speak("Yes?");
-    }
-  };
-
-  recognition.onerror = (event) => {
-
-    output.innerText =
-      "Voice Error: " + event.error;
-  };
-
-  recognition.start();
+  inputBox.value = "";
 }
+
+// ----------------------
+// EVENTS
+// ----------------------
+sendBtn.addEventListener(
+  "click",
+  sendMessage
+);
+
+inputBox.addEventListener(
+  "keypress",
+  (e) => {
+
+    if (e.key === "Enter") {
+      sendMessage();
+    }
+  }
+);
