@@ -1,73 +1,39 @@
 import { askJarvis } from "./ai.js";
+
+// ELEMENTS
 const inputBox = document.getElementById("inputBox");
 const sendBtn = document.getElementById("sendBtn");
 const voiceBtn = document.getElementById("voiceBtn");
 const output = document.getElementById("output");
-const orb = document.querySelector(".orb");
 
-// -----------------------------
-// JARVIS BRAIN (simple logic)
-// -----------------------------
-function jarvisResponse(input) {
-  input = input.toLowerCase();
-
-  if (input.includes("hello")) {
-    return "Hello. Systems online.";
-  }
-
-  if (input.includes("who are you")) {
-    return "I am Drillions Jarvis. Your assistant system.";
-  }
-
-  if (input.includes("open youtube")) {
-    window.open("https://youtube.com", "_blank");
-    return "Opening YouTube.";
-  }
-
-  if (input.includes("open google")) {
-    window.open("https://google.com", "_blank");
-    return "Opening Google.";
-  }
-
-  if (input.includes("status")) {
-    return "All systems stable.";
-  }
-
-  return "Command not recognized.";
-}
-
-// -----------------------------
-// TEXT TO SPEECH (Jarvis talks)
-// -----------------------------
+// SPEAK FUNCTION
 function speak(text) {
-  const speech = new SpeechSynthesisUtterance(text);
-  speech.rate = 1;
-  speech.pitch = 1;
-  speech.volume = 1;
-  window.speechSynthesis.speak(speech);
+  const msg = new SpeechSynthesisUtterance(text);
+  window.speechSynthesis.speak(msg);
 }
 
-// -----------------------------
-// MAIN SEND FUNCTION
-// -----------------------------
+// SEND MESSAGE TO AI
 async function sendMessage(textOverride) {
   const text = (textOverride || inputBox.value).trim();
   if (!text) return;
 
   output.innerText = "Jarvis is thinking...";
 
-  const response = await askJarvis(text);
+  try {
+    const response = await askJarvis(text);
 
-  output.innerText = `You: ${text}\nJarvis: ${response}`;
+    output.innerText = `You: ${text}\n\nJarvis: ${response}`;
 
-  speak(response);
+    speak(response);
+  } catch (err) {
+    output.innerText = "Error connecting to AI.";
+    console.error(err);
+  }
 
   inputBox.value = "";
 }
 
-// -----------------------------
-// BUTTON INPUT
-// -----------------------------
+// BUTTON
 sendBtn.addEventListener("click", () => sendMessage());
 
 // ENTER KEY
@@ -75,17 +41,12 @@ inputBox.addEventListener("keypress", (e) => {
   if (e.key === "Enter") sendMessage();
 });
 
-// -----------------------------
-// VOICE RECOGNITION ENGINE
-// -----------------------------
+// VOICE INPUT
 const SpeechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition;
 
 const recognition = new SpeechRecognition();
-
-recognition.continuous = false;
 recognition.lang = "en-US";
-recognition.interimResults = false;
 
 voiceBtn.addEventListener("click", () => {
   output.innerText = "Listening...";
@@ -98,5 +59,5 @@ recognition.onresult = (event) => {
 };
 
 recognition.onerror = () => {
-  output.innerText = "Voice error. Try again.";
+  output.innerText = "Voice error.";
 };
