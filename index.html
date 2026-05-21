@@ -2,75 +2,47 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>DRILLIONS // JARVIS</title>
-
+  <title>Drillions Jarvis</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <div class="layout">
+<div class="layout">
 
-    <!-- LEFT PANEL -->
-    <div class="panel left-panel">
+  <!-- LEFT PANEL -->
+  <div class="panel left-panel">
 
-      <h2>SYSTEM</h2>
+    <div id="status">AWAITING COMMAND...</div>
 
-      <div class="card">
-        STATUS: ONLINE
-      </div>
-
-      <div class="card">
-        CORE: STABLE
-      </div>
-
-      <div class="card">
-        NETWORK: ACTIVE
-      </div>
-
-    </div>
-
-    <!-- CENTER -->
-    <div class="center-area">
-
-      <img src="assets/drillions-logo.png" class="logo" />
-
-<h1>DRILLIONS // JARVIS</h1>
-
-      <div class="orb"></div>
-
-      <div id="status">
-        AWAITING COMMAND...
-      </div>
-
-      <input
-        id="inputBox"
-        type="text"
-        placeholder="Enter command..."
-      >
-
-      <button id="sendBtn">
-        EXECUTE
-      </button>
-
-    </div>
-
-    <!-- RIGHT PANEL -->
-    <div class="panel right-panel">
-
-      <h2>TERMINAL</h2>
-
-      <div id="terminal">
-        System initialized...
-      </div>
-
+    <div class="calendar-widget">
+      <div class="calendar-header" id="calHeader"></div>
+      <div class="calendar-grid" id="calGrid"></div>
     </div>
 
   </div>
 
-  <script src="script.js"></script>
+  <!-- CENTER -->
+  <div class="center-area">
+
+    <div class="orb"></div>
+
+    <h1>DRILLIONS // JARVIS</h1>
+
+    <input id="inputBox" placeholder="Type command..." />
+
+    <button id="sendBtn">Send</button>
+
+    <div id="terminal"></div>
+
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="panel right-panel"></div>
+
+</div>
+
+<script src="script.js"></script>
 
 </body>
 </html>
