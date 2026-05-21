@@ -1,3 +1,4 @@
+import { askJarvis } from "./ai.js";
 const inputBox = document.getElementById("inputBox");
 const sendBtn = document.getElementById("sendBtn");
 const voiceBtn = document.getElementById("voiceBtn");
@@ -49,15 +50,17 @@ function speak(text) {
 // -----------------------------
 // MAIN SEND FUNCTION
 // -----------------------------
-function sendMessage(textOverride) {
+async function sendMessage(textOverride) {
   const text = (textOverride || inputBox.value).trim();
   if (!text) return;
 
-  const response = jarvisResponse(text);
+  output.innerText = "Jarvis is thinking...";
+
+  const response = await askJarvis(text);
 
   output.innerText = `You: ${text}\nJarvis: ${response}`;
 
-  speak(response); // JARVIS SPEAKS
+  speak(response);
 
   inputBox.value = "";
 }
