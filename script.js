@@ -2,15 +2,11 @@ const inputBox = document.getElementById("inputBox");
 const sendBtn = document.getElementById("sendBtn");
 const terminal = document.getElementById("terminal");
 const statusText = document.getElementById("status");
-const orb = document.querySelector(".orb");
 
 function log(text) {
   terminal.innerText = text + "\n\n" + terminal.innerText;
 }
 
-/* ---------------------------
-   SPEECH
---------------------------- */
 function speak(text) {
   window.speechSynthesis.cancel();
   const msg = new SpeechSynthesisUtterance(text);
@@ -19,9 +15,6 @@ function speak(text) {
   speechSynthesis.speak(msg);
 }
 
-/* ---------------------------
-   OPEN LINK SAFELY
---------------------------- */
 function openTab(url) {
   const a = document.createElement("a");
   a.href = url;
@@ -32,51 +25,9 @@ function openTab(url) {
 }
 
 /* ---------------------------
-   CALENDAR
+   COMMANDS ONLY (NO AI)
 --------------------------- */
-function generateCalendar() {
-
-  const now = new Date();
-  const month = now.getMonth();
-  const year = now.getFullYear();
-  const today = now.getDate();
-
-  const firstDay = new Date(year, month, 1).getDay();
-  const days = new Date(year, month + 1, 0).getDate();
-
-  const names = [
-    "January","February","March","April","May","June",
-    "July","August","September","October","November","December"
-  ];
-
-  document.getElementById("calHeader").innerText =
-    `${names[month]} ${year}`;
-
-  const grid = document.getElementById("calGrid");
-  grid.innerHTML = "";
-
-  for (let i = 0; i < firstDay; i++) {
-    grid.appendChild(document.createElement("div"));
-  }
-
-  for (let d = 1; d <= days; d++) {
-
-    const el = document.createElement("div");
-    el.classList.add("calendar-day");
-    el.innerText = d;
-
-    if (d === today) {
-      el.classList.add("today");
-    }
-
-    grid.appendChild(el);
-  }
-}
-
-/* ---------------------------
-   JARVIS ENGINE
---------------------------- */
-function jarvisResponse(text) {
+function runCommand(text) {
 
   const t = text.toLowerCase();
 
@@ -90,14 +41,20 @@ function jarvisResponse(text) {
 
   const time = `${h}:${m} ${ampm}`;
 
-  /* MUSIC */
+  // -------------------------
+  // MUSIC
+  // -------------------------
   if (t.includes("mind of a crook")) {
     openTab("https://www.youtube.com/watch?v=wALHel_YMQg");
     return "Playing Mind of a Crook.";
   }
 
-  /* COMMANDS */
-  if (t.includes("time")) return `Dejuan, the time is ${time}`;
+  // -------------------------
+  // BASIC COMMANDS
+  // -------------------------
+  if (t.includes("time")) {
+    return `Dejuan, the time is ${time}`;
+  }
 
   if (t.includes("youtube")) {
     openTab("https://youtube.com");
@@ -114,11 +71,16 @@ function jarvisResponse(text) {
     return "Opening SoundCloud.";
   }
 
-  return "Command not recognized, Dejuan.";
+  if (t.includes("gmail")) {
+    openTab("https://mail.google.com");
+    return "Opening Gmail.";
+  }
+
+  return "Command not recognized.";
 }
 
 /* ---------------------------
-   RUN
+   EXECUTION
 --------------------------- */
 function runJarvis() {
 
@@ -127,12 +89,12 @@ function runJarvis() {
 
   log("YOU: " + text);
 
-  const response = jarvisResponse(text);
+  const response = runCommand(text);
 
   setTimeout(() => {
     log("JARVIS: " + response);
     speak(response);
-  }, 250);
+  }, 200);
 
   inputBox.value = "";
 }
@@ -145,16 +107,3 @@ sendBtn.addEventListener("click", runJarvis);
 inputBox.addEventListener("keypress", (e) => {
   if (e.key === "Enter") runJarvis();
 });
-
-/* ---------------------------
-   STARTUP
---------------------------- */
-window.onload = () => {
-  generateCalendar();
-
-  setTimeout(() => {
-    const msg = "Jarvis systems online.";
-    log("JARVIS: " + msg);
-    speak(msg);
-  }, 800);
-};
