@@ -2,7 +2,7 @@ export async function askJarvis(message) {
   const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: {
-      "Authorization": "Bearer YOUR_API_KEY_HERE",
+      "Authorization": "Bearer sk-or-v1-a96...f65
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
@@ -10,7 +10,7 @@ export async function askJarvis(message) {
       messages: [
         {
           role: "system",
-          content: "You are DRILLIONS JARVIS, a futuristic AI assistant. Keep responses short, direct, and slightly robotic."
+          content: "You are DRILLIONS JARVIS. You are a futuristic AI assistant. Keep responses short, clear, and slightly robotic."
         },
         {
           role: "user",
