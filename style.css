@@ -1,0 +1,50 @@
+body {
+  margin: 0;
+  background: #050505;
+  color: white;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
+
+.jarvis-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+h1 {
+  font-size: 3rem;
+  letter-spacing: 4px;
+
+  background: linear-gradient(to right, white, gray);
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.orb {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+
+  background:
+    radial-gradient(circle, #3a3a3a, #0f0f0f);
+
+  box-shadow:
+    0 0 40px rgba(255,255,255,0.2);
+
+  margin: 40px;
+}
+
+button {
+  padding: 15px 30px;
+  border: none;
+  border-radius: 12px;
+
+  background: #1a1a1a;
+  color: white;
+
+  cursor: pointer;
+}
