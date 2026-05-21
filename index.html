@@ -1,38 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>DRILLIONS // JARVIS</title>
 
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <div class="jarvis-container">
+  <div class="layout">
 
-    <h1>DRILLIONS // JARVIS</h1>
+    <!-- LEFT PANEL -->
+    <div class="panel left-panel">
 
-    <div class="orb"></div>
+      <h2>SYSTEM</h2>
 
-    <div id="status">SYSTEM INITIALIZING...</div>
+      <div class="card">
+        STATUS: ONLINE
+      </div>
 
-    <div id="output">
-      Say: "Hey Jarvis"
+      <div class="card">
+        CORE: STABLE
+      </div>
+
+      <div class="card">
+        NETWORK: ACTIVE
+      </div>
+
     </div>
 
-    <input
-      id="inputBox"
-      type="text"
-      placeholder="Type to Jarvis..."
-    />
+    <!-- CENTER -->
+    <div class="center-area">
 
-    <button id="sendBtn">SEND</button>
+      <h1>DRILLIONS // JARVIS</h1>
+
+      <div class="orb"></div>
+
+      <div id="status">
+        AWAITING COMMAND...
+      </div>
+
+      <input
+        id="inputBox"
+        type="text"
+        placeholder="Enter command..."
+      >
+
+      <button id="sendBtn">
+        EXECUTE
+      </button>
+
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="panel right-panel">
+
+      <h2>TERMINAL</h2>
+
+      <div id="terminal">
+        System initialized...
+      </div>
+
+    </div>
 
   </div>
 
-  <script type="module" src="script.js"></script>
+  <script src="script.js"></script>
 
 </body>
 </html>
