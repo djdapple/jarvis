@@ -4,11 +4,8 @@ const terminal = document.getElementById("terminal");
 const statusText = document.getElementById("status");
 const orb = document.querySelector(".orb");
 
-/* ---------------------------
-   MEMORY ENGINE
---------------------------- */
-let commandHistory = [];
 let lastCommand = null;
+let commandHistory = [];
 
 /* ---------------------------
    LOG
@@ -19,14 +16,12 @@ function log(text) {
 }
 
 /* ---------------------------
-   SPEAK (AUDIO OUTPUT)
+   SPEECH
 --------------------------- */
 function speak(text) {
-
   window.speechSynthesis.cancel();
 
   const msg = new SpeechSynthesisUtterance(text);
-
   msg.rate = 0.95;
   msg.pitch = 0.9;
 
@@ -34,34 +29,45 @@ function speak(text) {
 }
 
 /* ---------------------------
-   JARVIS CORE COMMANDS
+   JARVIS RESPONSE ENGINE
 --------------------------- */
 function jarvisResponse(text) {
 
   const t = text.toLowerCase();
 
   const now = new Date();
-
   let h = now.getHours();
   let m = now.getMinutes();
 
   const ampm = h >= 12 ? "PM" : "AM";
-
   h = h % 12 || 12;
   m = m < 10 ? "0" + m : m;
 
-  const currentTime = `${h}:${m} ${ampm}`;
+  const timeString = `${h}:${m} ${ampm}`;
 
+  /* -------------------------
+     MUSIC LIBRARY
+  --------------------------*/
+  const music = {
+    "mind of a crook": {
+      url: "https://youtu.be/wALHel_YMQg?si=IpaByTNS_Dk4PJW_",
+      response: "Playing Mind of a Crook."
+    }
+  };
+
+  /* -------------------------
+     COMMANDS
+  --------------------------*/
   const commands = {
 
     time: () =>
-      `Dejuan, the time is ${currentTime}`,
+      `Dejuan, the time is ${timeString}`,
 
     hello: () =>
       "Hello Dejuan. Systems online.",
 
     status: () =>
-      "All systems operational, Dejuan.",
+      "All systems operational.",
 
     youtube: () => {
       window.open("https://youtube.com", "_blank");
@@ -76,34 +82,28 @@ function jarvisResponse(text) {
     soundcloud: () => {
       window.open("https://soundcloud.com", "_blank");
       return "Opening SoundCloud.";
-    },
-
-    replay: () => {
-
-      if (!lastCommand) {
-        return "No command to replay.";
-      }
-
-      return `Replaying: ${lastCommand}`;
-    },
-
-    history: () => {
-
-      return commandHistory
-        .slice(-5)
-        .map((c, i) => `${i + 1}. ${c}`)
-        .join("\n");
     }
   };
 
-  for (let key in commands) {
+  /* -------------------------
+     MUSIC MATCH FIRST
+  --------------------------*/
+  for (let key in music) {
+    if (t.includes(key)) {
+      window.open(music[key].url, "_blank");
+      return music[key].response;
+    }
+  }
 
+  /* -------------------------
+     NORMAL COMMAND MATCH
+  --------------------------*/
+  for (let key in commands) {
     if (
       t.includes(key) ||
       t.includes("open " + key) ||
       t.includes("launch " + key)
     ) {
-
       return commands[key]();
     }
   }
@@ -112,32 +112,24 @@ function jarvisResponse(text) {
 }
 
 /* ---------------------------
-   EXECUTE
+   RUN
 --------------------------- */
 function runJarvis() {
 
   const text = inputBox.value.trim();
   if (!text) return;
 
-  statusText.innerText = "PROCESSING...";
-
   log("YOU: " + text);
 
-  // MEMORY STORE
-  commandHistory.push(text);
   lastCommand = text;
+  commandHistory.push(text);
 
   const response = jarvisResponse(text);
 
   setTimeout(() => {
-
     log("JARVIS: " + response);
-
     speak(response);
-
-    statusText.innerText = "AWAITING COMMAND...";
-
-  }, 400);
+  }, 300);
 
   inputBox.value = "";
 }
@@ -150,18 +142,3 @@ sendBtn.addEventListener("click", runJarvis);
 inputBox.addEventListener("keypress", (e) => {
   if (e.key === "Enter") runJarvis();
 });
-
-/* ---------------------------
-   STARTUP
---------------------------- */
-window.onload = () => {
-
-  setTimeout(() => {
-
-    const msg = "Memory system online, Dejuan.";
-
-    log("JARVIS: " + msg);
-    speak(msg);
-
-  }, 1000);
-};
