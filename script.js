@@ -62,7 +62,7 @@ function jarvisResponse(rawText) {
   // -------------------------
   const music = {
     "mind of a crook": {
-      url: "https://youtu.be/wALHel_YMQg",
+      url: ""https://www.youtube.com/watch?v=wALHel_YMQg"",
       response: "Playing Mind of a Crook."
     }
   };
