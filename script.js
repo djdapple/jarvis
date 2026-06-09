@@ -78,7 +78,11 @@ function runCommand(text) {
 
   return "Command not recognized.";
 }
+const command = input.toLowerCase();
 
+if (command === "c") {
+    window.location.href = "https://soundcloud.com";
+}
 /* ---------------------------
    EXECUTION
 --------------------------- */
